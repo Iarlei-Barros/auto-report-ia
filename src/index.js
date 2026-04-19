@@ -1,28 +1,13 @@
-const fs = require("fs");
-const fetchData = require("./services/fetchData");
-const processData = require("./services/processData");
-const generateReport = require("./services/generateReport");
-const log = require("./utils/logger");
+const express = require("express");
+const app = express();
 
-async function main(){
-    try{
-        log("Iniciando automação...");
+const reportRoute = require("./routes/reportRoute");
 
-        const data = await fetchData();
-        log("Dados coletados");
+const PORT = process.env.PORT || 3000;
 
-        const processed = processData(data);
-        log("Dados processados");
+app.use(express.json());
+app.use("/api", reportRoute);
 
-        const report = generateReport(processed);
-
-        fs.writeFileSync("output/report.txt", report);
-        log("Relatório gerado com sucesso!");
-    } 
-    
-    catch(error){
-        log("Erro: ", + error.message);
-    }
-}
-
-main();
+app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
